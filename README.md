@@ -28,7 +28,7 @@ Hasil build ada di `dist/` dan dapat dihosting sebagai situs statis.
 - FAQ menggunakan elemen disclosure native.
 - Dukungan keyboard, focus visible, dan preferensi reduced motion.
 
-Tautan App Store/TestFlight belum ditemukan dalam materi proyek, sehingga CTA mengarah ke demo. Tambahkan tautan resmi setelah tersedia. Warna tombol utama `#070346`. Font DM Sans dan Lora dimuat dari Google Fonts dengan fallback sans-serif.
+Section penutup menampilkan QR unduhan App Store yang diberikan pemilik proyek, dengan label EN/ID. Tombol demo tetap membuka video. Tidak ada URL App Store/TestFlight yang dikarang. Warna tombol utama `#070346`. Font DM Sans dan Lora dimuat dari Google Fonts dengan fallback sans-serif.
 
 ## GitHub Pages
 
@@ -64,3 +64,11 @@ Konten situs tidak menjanjikan perubahan panduan otomatis setelah setiap salat. 
 Workflow memisahkan job `build` (build dan upload `github-pages`) dari job `deploy` (`needs: build`). Ini mengikuti rekomendasi GitHub dan menghindari lookup artefak yang terlalu cepat setelah upload di job yang sama ([upstream issue #451](https://github.com/actions/deploy-pages/issues/451)). Nama artefak ditetapkan eksplisit pada kedua action.
 
 Setelah perubahan workflow di-commit dan di-push ke `main`, gunakan run baru yang dipicu push tersebut. Re-run run lama tetap memakai revisi workflow lama. Pada workflow baru, jika upload sudah berhasil dan hanya deploy gagal, pilih **Re-run failed jobs** agar tidak mengunggah artefak bernama sama dua kali. Jika artefak sudah kedaluwarsa, jalankan workflow baru melalui **Run workflow**.
+
+### Scroll Craft / sand motion
+
+The owner-requested [Scroll Craft](https://github.com/nateherkai/scroll-craft) skill is installed at `.agents/skills/scroll-craft`. Its zero-dependency runtime is vendored unchanged in `src/vendor/scrollcraft`, alongside the upstream CSS and MIT license. Only the JS is loaded: the flow-progress API needs no global engine styles, so existing Sholu styles stay authoritative. No extra npm animation dependency is required.
+
+`src/SandBackdrop.jsx` renders one fixed procedural lavender sand backdrop behind the entire page. Its stable grains and wind are inspired by `Sholu/SalatGuide/View/Components/GlassBlobShader.swift` in the local SalatBuddy project. This is a GLSL adaptation for the web, not a full Metal shader port. The page-level `useScrollMotion` hook mounts Scroll Craft independently of WebGL. It applies native parallax to the hero and original app screenshots and reveals guide/personalization copy on entry. The global shader independently reads scroll distance in viewport units so the sand continues to move behind every section through the footer, without resetting or clamping at section boundaries. Existing screenshots, demo, copy and section lengths are preserved.
+
+Run `node scripts/check-sand.mjs` for lifecycle, reduced-motion, DPR and WebGL fallback checks, then `npm run build`. The renderer fills the viewport and pauses while the tab is hidden and provides a static reduced-motion scene. After GPU context loss it keeps the CSS fallback until reload. Preflight reports FFmpeg and Playwright missing locally; this implementation does not scrub video or generate assets, and visual checks use the available browser instead.

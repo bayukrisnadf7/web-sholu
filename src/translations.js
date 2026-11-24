@@ -1,4 +1,6 @@
 export const indonesian = {
+  "Download on the App Store": "Unduh di App Store",
+  "Scan the QR code to download Sholu on the App Store": "Pindai kode QR untuk mengunduh Sholu di App Store",
   "The team": "Tim Sholu",
   "Behind Sholu": "Di balik Sholu",
   "Meet the people behind the app.": "Kenali orang-orang di balik aplikasi Sholu.",

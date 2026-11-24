@@ -24,3 +24,7 @@ Product summaries on the website are faithful paraphrases, not necessarily verba
 | Page description metadata | Same onboarding / personalization / reflection sources above | Describes those implemented features only. |
 
 Removed or corrected: generic journey/growth marketing paragraphs; an unverified “Lifestyle” category; download FAQ that described a missing website link instead of app behavior; wording suggesting all users take every personalization question; wording suggesting reflection automatically changes the next prayer's guidance; unused dummy-role translations. No download link, store availability, testimonials, numbers, or extra product features were added.
+
+## Owner-supplied App Store download QR
+
+The owner explicitly supplied `66A0C828-2119-4BAD-BA5F-BEE64DBB3322.png` and requested the QR with App Store download text in the existing closing section before the footer. The original transparent PNG is copied unchanged to `public/assets/app-store-qr.png`, rendered on white. Labels: EN `Download on the App Store`; ID `Unduh di App Store`. This new instruction supersedes the earlier absence of download material. No direct App Store URL has been invented.

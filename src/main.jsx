@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import "./styles.css";
 import { indonesian } from "./translations";
+import { SandBackdrop } from "./SandBackdrop";
+import { useScrollMotion } from "./useScrollMotion";
 
 const asset = (name) => `${import.meta.env.BASE_URL}assets/${name}`;
 const screens = [
@@ -102,8 +104,8 @@ const personalizationScreens = [
 const team = [
   { image: "member-01.jpg", name: "Bayu Krisna D.F", role: "iOS Developer" },
   { image: "member-02.jpg", name: "Bintang Marsyuma R", role: "iOS Developer" },
-  { image: "member-03.jpg", name: "M. Syafiq Irzaqy", role: "iOS Developer" },
-  { image: "member-04.jpg", name: "M. Muthi Nuritzan", role: "iOS Developer" },
+  { image: "member-03.jpg", name: "M. Syafiq Irzaky", role: "iOS Developer" },
+  { image: "member-04.jpg", name: "M. Muthi’ Nuritzan", role: "iOS Developer" },
   { image: "member-05.jpg", name: "Rizki Fitriani", role: "UI/UX Designer" },
   { image: "member-06.jpg", name: "Mahfiraturrahmi", role: "UI/UX Designer" },
 ];
@@ -166,6 +168,8 @@ function VideoModal({ onClose, t }) {
   );
 }
 function App() {
+  const mainRef = useRef(null);
+  useScrollMotion(mainRef);
   const [language, setLanguage] = useState(() => {
     try {
       return localStorage.getItem("sholu-language") === "id" ? "id" : "en";
@@ -194,6 +198,7 @@ function App() {
   const [personalizationActive, setPersonalizationActive] = useState(1);
   return (
     <>
+      <SandBackdrop />
       <a className="skip-link" href="#main">
         {t("Skip to content")}
       </a>
@@ -248,10 +253,10 @@ function App() {
           </button>
         </div>
       </header>
-      <main id="main">
+      <main id="main" ref={mainRef}>
         <div className="hero-intro">
-          <section className="hero container" id="home">
-            <div className="hero-copy">
+          <section className="hero container" id="home" data-sc-act="flow">
+            <div className="hero-copy" data-sc-parallax="-2.2">
               <h1>{t("Your Salah Companion")}</h1>
               <p>{t("Do salah at your own pace")}</p>
               <p className="hero-description">
@@ -289,9 +294,9 @@ function App() {
             </div>
           </div>
         </div>
-        <section id="experience" className="experience section">
+        <section id="experience" className="experience section" data-sc-act="flow">
           <div className="container">
-            <div className="section-heading">
+            <div className="section-heading" data-sc-in>
               <div>
                 <h2>{t("Prayer guide")}</h2>
               </div>
@@ -299,7 +304,7 @@ function App() {
             </div>
             <div className="experience-grid">
               <div className="screen-gallery">
-                <div className="gallery-stage">
+                <div className="gallery-stage" data-sc-parallax="-1.4">
                   <AppImage
                     key={screens[active].image}
                     eager
@@ -351,8 +356,8 @@ function App() {
             </div>
           </div>
         </section>
-        <section className="journey container section" id="how-it-works">
-          <div className="journey-copy">
+        <section className="journey container section" id="how-it-works" data-sc-act="flow">
+          <div className="journey-copy" data-sc-in>
             <h2>{t("Do salah at your own pace")}</h2>
             <p>
               {t(
@@ -368,7 +373,7 @@ function App() {
               ))}
             </ol>
           </div>
-          <figure className="personalization-figure">
+          <figure className="personalization-figure" data-sc-parallax="1.5">
             <AppImage
               name={personalizationScreens[personalizationActive].image}
               alt={t(personalizationScreens[personalizationActive].caption)}
@@ -451,15 +456,21 @@ function App() {
           </div>
         </section>
         <section className="closing container">
-          <h2>{t("Let’s do salah together with Sholu!")}</h2>
-          <p>{t("Just start your salah. Sholu will guide you at your own pace!")}</p>
-          <button className="button" onClick={() => setVideo(true)}>
-            <Play size={15} fill="currentColor" />
-            {t("Meet Sholu")}
-          </button>
-          <span className="closing-signature">
-            {t("Your Salah Companion")}
-          </span>
+          <div className="closing-copy">
+            <h2>{t("Let’s do salah together with Sholu!")}</h2>
+            <p>{t("Just start your salah. Sholu will guide you at your own pace!")}</p>
+            <button className="button" onClick={() => setVideo(true)}>
+              <Play size={15} fill="currentColor" />
+              {t("Meet Sholu")}
+            </button>
+            <span className="closing-signature">
+              {t("Your Salah Companion")}
+            </span>
+          </div>
+          <figure className="app-store-download">
+            <img src={asset("app-store-qr.png")} alt={t("Scan the QR code to download Sholu on the App Store")} width="1414" height="2000" loading="lazy" />
+            <figcaption>{t("Download on the App Store")}</figcaption>
+          </figure>
         </section>
       </main>
       <footer className="container">

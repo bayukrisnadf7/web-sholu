@@ -12,6 +12,6 @@ The website supports English and Indonesian; its navbar selection persists local
 
 Official taglines supplied by the owner: English **Your Salah Companion**; Indonesian **Mulai salat bareng Sholu**. These override older project marketing drafts.
 
-No download URL has been supplied. Website actions lead to the actual demo or sections; do not invent availability, endorsements, testimonials, statistics, or claims of guaranteed learning or religious validity.
+The owner supplied an App Store download QR image and requested its download label in the closing section. Use `public/assets/app-store-qr.png` unchanged, on a white background. No direct download URL has been supplied; do not invent a link. Other website actions lead to the actual demo or sections. Do not invent endorsements, testimonials, statistics, or claims of guaranteed learning or religious validity.
 
 Implementation: React 19, Vite, plain CSS, and Lucide icons. GitHub Pages hosting with a configurable Vite base path.
