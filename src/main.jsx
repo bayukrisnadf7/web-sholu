@@ -1,50 +1,484 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { createRoot } from 'react-dom/client';
-import { BookOpen, ChevronDown, Headphones, Heart, Menu, Play, SlidersHorizontal, Smartphone, X } from 'lucide-react';
-import './styles.css';
+import React, { useEffect, useRef, useState } from "react";
+import { createRoot } from "react-dom/client";
+import {
+  BookOpen,
+  ChevronDown,
+  Headphones,
+  Heart,
+  Menu,
+  Play,
+  X,
+} from "lucide-react";
+import "./styles.css";
+import { indonesian } from "./translations";
 
-const asset = name => `${import.meta.env.BASE_URL}assets/${name}`;
+const asset = (name) => `${import.meta.env.BASE_URL}assets/${name}`;
 const screens = [
-  { image: 'takbir-latest.jpeg', name: 'Movement guide', caption: 'Understand the movement', text: 'Follow the visual guide to learn each position, one step at a time.' },
-  { image: 'home-latest.jpeg', name: 'Home', caption: 'Make space for your next prayer', text: 'See the prayer schedule and begin your salah from the Sholu home screen.' },
+  {
+    "image": "takbir-latest.jpeg",
+    "name": "Movement guide",
+    "caption": "Takbiratul Ihram",
+    "text": "Raise both hands to the level of your ears or shoulders."
+  },
+  {
+    "image": "home-latest.jpeg",
+    "name": "Home",
+    "caption": "Prayer times",
+    "text": "See prayer times for your location and start the current prayer from the home screen."
+  }
 ];
 const questions = [
-  ['Who is Sholu for?', 'Sholu is a salah companion for people learning to pray, especially new Muslims. It offers guidance through movements and recitations, with room to learn gradually.'],
-  ['How does Sholu personalize my guidance?', 'During personalization, Sholu asks what you already know about salah movements and recitations, then helps you find guidance that fits your starting point.'],
-  ['Do I need to memorize every recitation before starting?', 'You can learn gradually. Sholu provides audio recitations to listen to and follow, alongside visual guidance for each step.'],
-  ['What happens after salah?', 'You can reflect on what felt comfortable and what you would like to keep learning. Sholu uses that reflection to adjust the guidance for your next prayer.'],
-  ['Where can I download Sholu?', 'An official download link has not been added to this website yet. In the meantime, you can explore the app screens and watch the project demo.'],
+  [
+    "Who is Sholu for?",
+    "Sholu is an iPhone salah companion for people learning to pray, especially new Muslims. It guides movements and recitations during salah."
+  ],
+  [
+    "How does personalization work?",
+    "Sholu first asks how well you know the salah movements. If you are just starting, it begins with stage 1. Otherwise, it asks about Al-Fatihah, Final Tashahhud, and other recitations to determine your starting guidance."
+  ],
+  [
+    "What guidance does Sholu provide?",
+    "Each stage includes movement guidance. Stage 1 uses tasbih recitations while standing and during Tashahhud; stage 2 includes Al-Fatihah and Final Tashahhud; stage 3 includes all recitations. Listen to Sholu, then repeat the words shown on screen."
+  ],
+  [
+    "Does Sholu listen to my recitation?",
+    "With microphone access enabled, Sholu listens to your recitation and guides you to the next movement or recitation."
+  ],
+  [
+    "How does reflection affect my guidance?",
+    "In reflection, you rate your recitation fluency from 1 to 5. Based on your recorded reflections, Sholu may offer longer recitation passages or the next stage. You can accept the offer or keep the same guidance."
+  ]
 ];
-function Brand() { return <a className="brand" href="#home" aria-label="Sholu home"><img src={asset('app-icon.jpg')} alt="" width="38" height="38" /><span>sholu</span></a>; }
-function AppImage({ name, alt, className = '', eager = false }) { return <img className={className} src={asset(`screens/${name.includes('.') ? name : `${name}.png`}`)} alt={alt} loading={eager ? 'eager' : 'lazy'} width={name.endsWith('.jpeg') ? 1206 : 143} height={name.endsWith('.jpeg') ? 2622 : 309} />; }
-function VideoModal({ onClose }) {
+const features = [
+  [
+    "Movements and their meanings",
+    "Explore the movement guide to see the position and meaning of each salah movement."
+  ],
+  [
+    "Listen to the recitation",
+    "Just listen to Sholu and repeat the words shown on your screen."
+  ],
+  [
+    "Listens to your recitations",
+    "With your microphone on, Sholu will listen to your recitation and guide you to the next step."
+  ]
+];
+const steps = [
+  [
+    "Prayer Movements",
+    "Choose whether you are just starting, know a few movements, or know all the salah movements."
+  ],
+  [
+    "Salah recitations",
+    "If you already know some movements, Sholu asks about Al-Fatihah, Final Tashahhud, and other recitations. Choose: “I don’t know it yet”, “I can recite it, but still struggle”, or “I can recite it fluently”."
+  ],
+  [
+    "Guidance for your stage",
+    "Sholu determines your starting stage from your movement knowledge and fluency in Al-Fatihah and Final Tashahhud."
+  ]
+];
+const personalizationScreens = [
+  {
+    "image": "personalization-latest.jpeg",
+    "label": "Movements",
+    "caption": "How well do you know the salah movements?"
+  },
+  {
+    "image": "personalization-fatihah.jpeg",
+    "label": "Al-Fatihah",
+    "caption": "How well do you know Surah Al-Fatihah?"
+  },
+  {
+    "image": "personalization-tashahhud.jpeg",
+    "label": "Final Tashahhud",
+    "caption": "How well do you know the recitation for the Final Tashahhud?"
+  },
+  {
+    "image": "personalization-other.jpeg",
+    "label": "Other recitations",
+    "caption": "How well do you know the other salah recitations?"
+  }
+];
+const team = [
+  { image: "member-01.jpg", name: "Bayu Krisna D.F", role: "iOS Developer" },
+  { image: "member-02.jpg", name: "Bintang Marsyuma R", role: "iOS Developer" },
+  { image: "member-03.jpg", name: "M. Syafiq Irzaqy", role: "iOS Developer" },
+  { image: "member-04.jpg", name: "M. Muthi Nuritzan", role: "iOS Developer" },
+  { image: "member-05.jpg", name: "Rizki Fitriani", role: "UI/UX Designer" },
+  { image: "member-06.jpg", name: "Mahfiraturrahmi", role: "UI/UX Designer" },
+];
+function Brand({ t }) {
+  return (
+    <a className="brand" href="#home" aria-label={t("Sholu home")}>
+      <img src={asset("app-icon.jpg")} alt="" width="38" height="38" />
+      <span>sholu</span>
+    </a>
+  );
+}
+function AppImage({ name, alt, eager = false }) {
+  return (
+    <img
+      src={asset(`screens/${name}`)}
+      alt={alt}
+      loading={eager ? "eager" : "lazy"}
+      width={1206}
+      height={2622}
+    />
+  );
+}
+function VideoModal({ onClose, t }) {
   const ref = useRef(null);
   useEffect(() => {
     const previous = document.activeElement;
     const overflow = document.body.style.overflow;
     ref.current.showModal();
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = overflow; previous?.focus(); };
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = overflow;
+      previous?.focus();
+    };
   }, []);
-  return <dialog ref={ref} className="video-modal" aria-labelledby="video-title" onCancel={onClose} onClick={e => { if (e.target === e.currentTarget) onClose(); }}><div className="modal-header"><h2 id="video-title">Meet Sholu</h2><button className="icon-button" onClick={onClose} aria-label="Close video"><X /></button></div><video controls autoPlay playsInline poster={asset('video-poster.jpg')}><source src={asset('sholu-demo.mp4')} type="video/mp4" />Your browser does not support this video.</video></dialog>;
+  return (
+    <dialog
+      ref={ref}
+      className="video-modal"
+      aria-labelledby="video-title"
+      onCancel={onClose}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="modal-header">
+        <h2 id="video-title">{t("Meet Sholu")}</h2>
+        <button
+          className="icon-button"
+          onClick={onClose}
+          aria-label={t("Close video")}
+        >
+          <X />
+        </button>
+      </div>
+      <video controls autoPlay playsInline>
+        <source src={asset("sholu-demo.mp4")} type="video/mp4" />
+        {t("Your browser does not support this video.")}
+      </video>
+    </dialog>
+  );
 }
 function App() {
+  const [language, setLanguage] = useState(() => {
+    try {
+      return localStorage.getItem("sholu-language") === "id" ? "id" : "en";
+    } catch {
+      return "en";
+    }
+  });
+  const t = (text) => (language === "id" ? (indonesian[text] ?? text) : text);
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.title = t(
+      "Sholu — Your Salah Companion",
+    );
+    document.querySelector('meta[name="description"]').content = t(
+      "Your Salah Companion. Salah movement and recitation guidance, personalization, and reflection.",
+    );
+    try {
+      localStorage.setItem("sholu-language", language);
+    } catch {
+      /* Language switching also works without storage. */
+    }
+  }, [language]);
   const [menu, setMenu] = useState(false);
   const [video, setVideo] = useState(false);
   const [active, setActive] = useState(0);
-  return <>
-    <a className="skip-link" href="#main">Skip to content</a>
-    <header><div className="container navigation"><Brand /><nav id="mobile-navigation" aria-label="Main navigation" className={menu ? 'nav-links open' : 'nav-links'}>{[['About Sholu','about'],['The experience','experience'],['How it works','how-it-works'],['FAQs','faq']].map(([label,id]) => <a key={id} href={`#${id}`} onClick={() => setMenu(false)}>{label}</a>)}</nav><button className="button nav-button" onClick={() => setVideo(true)}><Play size={14} fill="currentColor" />Watch the demo</button><button className="icon-button mobile-menu" aria-label={menu ? 'Close menu' : 'Open menu'} aria-expanded={menu} aria-controls="mobile-navigation" onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}</button></div></header>
-    <main id="main">
-      <section className="hero container" id="home"><div className="hero-copy"><div className="eyebrow"><span className="eyebrow-line" />SHOLU: SALAH COMPANION</div><h1>Your companion<br />in <em>every prayer.</em></h1><p>Learning salah is a journey.<br />You don’t have to take it alone.</p><p className="hero-description">Find your starting point, follow each movement, and learn the recitations at your own pace. Sholu is here to walk with you.</p><div className="hero-actions"><a href="#experience" className="button">Explore Sholu</a><button className="text-button" onClick={() => setVideo(true)}><span className="play-icon"><Play size={13} fill="currentColor" /></span>Watch the demo</button></div><div className="hero-platform"><Smartphone size={17} />An iPhone companion for your salah journey</div></div><div className="hero-screens"><div className="hero-arch" /><span className="arch-outline" /><div className="home-screen"><AppImage eager name="home-latest.jpeg" alt="Original Sholu home screen showing the prayer schedule and start-salah experience" /></div><div className="guide-screen"><AppImage eager name="takbir-latest.jpeg" alt="Original Sholu Takbiratul Ihram movement guide" /></div><span className="screens-caption">A closer look at Sholu</span></div></section>
-      <div className="promise-strip"><div className="container promises"><span><BookOpen />Step-by-step guidance</span><span><Headphones />Listen, follow, learn</span><span><Heart />At your own pace</span></div></div>
-      <section className="intro container section" id="about"><span className="eyebrow">A LITTLE GUIDANCE. A LITTLE MORE CONFIDENCE.</span><h2>Start with what you know.<br /><em>Grow from where you are.</em></h2><p>For new Muslims, learning salah can feel like a lot to take in. There are movements to understand, recitations to remember, and a new rhythm to become familiar with.</p><p>Sholu makes space for that process, with gentle guidance through each step of your prayer.</p><div className="intro-bottom"><span />No rush. No need to know it all at once.<span /></div></section>
-      <section id="experience" className="experience section"><div className="container"><div className="section-heading"><div><span className="eyebrow">INSIDE SHOLU</span><h2>Less to figure out.<br /><em>More room to learn.</em></h2></div><p>Thoughtful support for the movements,<br className="desktop-only" /> the recitations, and everything you’re learning.</p></div><div className="experience-grid"><div className="screen-gallery"><div className="gallery-stage"><div className="screen-halo" /><AppImage key={screens[active].image} eager name={screens[active].image} alt={`Original Sholu ${screens[active].name} guidance screen`} /></div><div className="screen-tabs" role="group" aria-label="Explore app screens">{screens.map((screen,i) => <button key={screen.image} aria-pressed={active === i} onClick={() => setActive(i)} className={active === i ? 'selected' : ''}>{screen.name}</button>)}</div><div className="gallery-caption" aria-live="polite"><h3>{screens[active].caption}</h3><p>{screens[active].text}</p></div></div><div className="experience-details"><article><span className="feature-icon"><BookOpen /></span><div><h3>See each movement clearly</h3><p>Learn the sequence of salah through visual guidance that’s easy to follow, one movement at a time.</p></div></article><article><span className="feature-icon"><Headphones /></span><div><h3>Listen. Follow. Learn.</h3><p>Listen to the audio recitations, follow the pronunciation, and build familiarity gradually. You don’t have to memorize everything at once.</p></div></article><article><span className="feature-icon"><SlidersHorizontal /></span><div><h3>Guidance that starts with you</h3><p>Everyone has a different starting point. Personalization helps Sholu find the guidance that fits what you need.</p></div></article><div className="recitation-screenshot"><img src={asset('screens/recitation-latest.jpeg')} alt="Original Sholu Takbiratul Ihram recitation screen displaying Allahu Akbar" loading="lazy" width="2622" height="1206" /><span>A recitation screen from Sholu</span></div></div></div></div></section>
-      <section className="journey container section" id="how-it-works"><div className="journey-copy"><span className="eyebrow">YOUR JOURNEY, YOUR PACE</span><h2>A starting point<br /><em>that feels like yours.</em></h2><p>Begin with what you already know. Sholu helps you find the right guidance, then grows with you as you learn.</p><ol className="journey-list"><li><span>01</span><div><h3>Find your starting point</h3><p>Share how familiar you are with the movements and recitations of salah.</p></div></li><li><span>02</span><div><h3>Pray with guidance</h3><p>Follow the visual sequence and listen to the recitations along the way.</p></div></li><li><span>03</span><div><h3>Reflect and keep growing</h3><p>Notice what felt easier and what you want to keep learning for your next prayer.</p></div></li></ol></div><figure className="personalization-figure"><div className="personalization-arch" /><AppImage name="personalization-latest.jpeg" alt="Original Sholu personalization screen asking how well the user knows salah movements" /><figcaption>Guidance begins by getting to know you.</figcaption></figure></section>
-      <section className="reflection-wrap"><div className="container reflection section"><div className="reflection-copy"><span className="eyebrow"><Heart size={16} />A MOMENT TO REFLECT</span><h2>Every prayer is<br /><em>a chance to grow.</em></h2><p>After salah, take a moment to reflect with Sholu. Share what felt comfortable and what you’d like to keep learning.</p><p>Your reflection helps shape the guidance for your next prayer. There’s no need to be perfect, and no need to rush.</p></div><figure><img src={asset('screens/reflection.png')} alt="Original Sholu reflection screen asking the user to rate their fluency with tasbih recitations on a scale of one to five" width="994" height="457" loading="lazy" /><figcaption>Reflection in Sholu · Original app screen</figcaption></figure></div></section>
-      <section className="faq container section" id="faq"><div><span className="eyebrow">A FEW THINGS YOU MIGHT WONDER</span><h2>Let’s get<br /><em>to know Sholu.</em></h2><p>A little clarity before<br />you take your first step.</p></div><div className="faq-list">{questions.map(([question,answer]) => <details key={question}><summary>{question}<ChevronDown size={20} /></summary><p>{answer}</p></details>)}</div></section>
-      <section className="closing container"><span className="eyebrow">ONE STEP AT A TIME</span><h2>You don’t have to<br /><em>learn alone.</em></h2><p>Start with what you can. Learn what you don’t yet know.<br className="desktop-only" /> Keep moving forward with Sholu.</p><button className="button" onClick={() => setVideo(true)}><Play size={15} fill="currentColor" />Meet Sholu</button><span className="closing-signature">Your companion in every prayer.</span></section>
-    </main><footer className="container"><div><Brand /><span>Sholu: Salah Companion</span></div><span>Lifestyle · © {new Date().getFullYear()} Sholu</span><a href="#home">Back to top</a></footer>{video && <VideoModal onClose={() => setVideo(false)} />}
-  </>;
+  const [personalizationActive, setPersonalizationActive] = useState(1);
+  return (
+    <>
+      <a className="skip-link" href="#main">
+        {t("Skip to content")}
+      </a>
+      <header>
+        <div className="container navigation">
+          <Brand t={t} />
+          <nav
+            id="mobile-navigation"
+            aria-label={t("Main navigation")}
+            className={menu ? "nav-links open" : "nav-links"}
+          >
+            {[
+              ["The experience", "experience"],
+              ["How it works", "how-it-works"],
+              ["The team", "team"],
+              ["FAQs", "faq"],
+            ].map(([label, id]) => (
+              <a key={id} href={`#${id}`} onClick={() => setMenu(false)}>
+                {t(label)}
+              </a>
+            ))}
+          </nav>
+          <div
+            className="language-toggle"
+            role="group"
+            aria-label={t("Language")}
+          >
+            {[
+              ["en", "EN", "English"],
+              ["id", "ID", "Bahasa Indonesia"],
+            ].map(([code, label, name]) => (
+              <button
+                key={code}
+                type="button"
+                lang={code}
+                aria-label={name}
+                aria-pressed={language === code}
+                onClick={() => setLanguage(code)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <button
+            className="icon-button mobile-menu"
+            aria-label={t(menu ? "Close menu" : "Open menu")}
+            aria-expanded={menu}
+            aria-controls="mobile-navigation"
+            onClick={() => setMenu(!menu)}
+          >
+            {menu ? <X /> : <Menu />}
+          </button>
+        </div>
+      </header>
+      <main id="main">
+        <div className="hero-intro">
+          <section className="hero container" id="home">
+            <div className="hero-copy">
+              <h1>{t("Your Salah Companion")}</h1>
+              <p>{t("Do salah at your own pace")}</p>
+              <p className="hero-description">
+                {t(
+                  "Sholu will guide you through the sequence of salah movements and recitations in real time, so you can do salah with ease and peace of mind.",
+                )}
+              </p>
+              <div className="hero-actions">
+                <a href="#experience" className="button">
+                  {t("Explore Sholu")}
+                </a>
+                <button className="text-button" onClick={() => setVideo(true)}>
+                  <span className="play-icon">
+                    <Play size={13} fill="currentColor" />
+                  </span>
+                  {t("Watch the demo")}
+                </button>
+              </div>
+            </div>
+          </section>
+          <div className="promise-strip">
+            <div className="container promises">
+              <span>
+                <BookOpen />
+                {t("Prayer Movements")}
+              </span>
+              <span>
+                <Headphones />
+                {t("Listen to the recitation")}
+              </span>
+              <span>
+                <Heart />
+                {t("Do salah at your own pace")}
+              </span>
+            </div>
+          </div>
+        </div>
+        <section id="experience" className="experience section">
+          <div className="container">
+            <div className="section-heading">
+              <div>
+                <h2>{t("Prayer guide")}</h2>
+              </div>
+              <p>{t("The movements and their meanings, from Takbir to Tashahhud.")}</p>
+            </div>
+            <div className="experience-grid">
+              <div className="screen-gallery">
+                <div className="gallery-stage">
+                  <AppImage
+                    key={screens[active].image}
+                    eager
+                    name={screens[active].image}
+                    alt={t(screens[active].name)}
+                  />
+                </div>
+                <div
+                  className="screen-tabs"
+                  role="group"
+                  aria-label={t("Explore app screens")}
+                >
+                  {screens.map((screen, i) => (
+                    <button
+                      key={screen.image}
+                      aria-pressed={active === i}
+                      onClick={() => setActive(i)}
+                      className={active === i ? "selected" : ""}
+                    >
+                      {t(screen.name)}
+                    </button>
+                  ))}
+                </div>
+                <div className="gallery-caption" aria-live="polite">
+                  <h3>{t(screens[active].caption)}</h3>
+                  <p>{t(screens[active].text)}</p>
+                </div>
+              </div>
+              <div className="experience-details">
+                {features.map(([title, text]) => (
+                  <article key={title}>
+                    <h3>{t(title)}</h3>
+                    <p>{t(text)}</p>
+                  </article>
+                ))}
+                <div className="recitation-screenshot">
+                  <img
+                    src={asset("screens/recitation-latest.jpeg")}
+                    alt={t(
+                      "Original Sholu Takbiratul Ihram recitation screen displaying Allahu Akbar",
+                    )}
+                    loading="lazy"
+                    width="2622"
+                    height="1206"
+                  />
+                  <span>{t("A recitation screen from Sholu")}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section className="journey container section" id="how-it-works">
+          <div className="journey-copy">
+            <h2>{t("Do salah at your own pace")}</h2>
+            <p>
+              {t(
+                "So Sholu can guide you based on what you already know and what you’d like to learn.",
+              )}
+            </p>
+            <ol className="journey-list">
+              {steps.map(([title, text]) => (
+                <li key={title}>
+                  <h3>{t(title)}</h3>
+                  <p>{t(text)}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+          <figure className="personalization-figure">
+            <AppImage
+              name={personalizationScreens[personalizationActive].image}
+              alt={t(personalizationScreens[personalizationActive].caption)}
+            />
+            <div className="screen-tabs personalization-tabs" role="group" aria-label={t("Explore personalization screens")}>
+              {personalizationScreens.map(({ image, label }, i) => (
+                <button key={image} type="button" aria-pressed={personalizationActive === i} className={personalizationActive === i ? "selected" : ""} onClick={() => setPersonalizationActive(i)}>
+                  {t(label)}
+                </button>
+              ))}
+            </div>
+            <figcaption aria-live="polite">
+              {t(personalizationScreens[personalizationActive].caption)}
+            </figcaption>
+          </figure>
+        </section>
+        <section className="reflection-wrap">
+          <div className="container reflection section">
+            <div className="reflection-copy">
+              <h2>{t("A Quick Reflection")}</h2>
+              <p>
+                {t(
+                  "When you choose reflection after salah, rate your recitation fluency from 1 to 5. The questions follow the stage you used during that prayer.",
+                )}
+              </p>
+              <p>
+                {t(
+                  "Based on your recorded reflections, Sholu may offer longer recitation passages or the next stage. You can accept the offer or keep the same guidance.",
+                )}
+              </p>
+            </div>
+            <figure>
+              <img
+                src={asset("screens/reflection.png")}
+                alt={t(
+                  "Original Sholu reflection screen asking the user to rate their fluency with tasbih recitations on a scale of one to five",
+                )}
+                width="994"
+                height="457"
+                loading="lazy"
+              />
+              <figcaption>
+                {t("Reflection in Sholu · Original app screen")}
+              </figcaption>
+            </figure>
+          </div>
+        </section>
+        <section className="team container section" id="team" aria-labelledby="team-title">
+          <div className="team-heading">
+            <h2 id="team-title">{t("Behind Sholu")}</h2>
+            <p>{t("Meet the people behind the app.")}</p>
+          </div>
+          <div className="team-grid">
+            {team.map(({ image, name, role }) => (
+              <figure key={image}>
+                <img src={asset(`team/${image}`)} alt={t("Team member portrait")} width="666" height="1000" loading="lazy" />
+                <figcaption>
+                  <h3>{name}</h3>
+                  <p>{t(role)}</p>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+        <section className="faq container section" id="faq">
+          <div>
+            <h2>{t("About Sholu")}</h2>
+            <p>{t("Personalization, salah guidance, and reflection.")}</p>
+          </div>
+          <div className="faq-list">
+            {questions.map(([question, answer], i) => (
+              <details key={i}>
+                <summary>
+                  {t(question)}
+                  <ChevronDown size={20} />
+                </summary>
+                <p>{t(answer)}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+        <section className="closing container">
+          <h2>{t("Let’s do salah together with Sholu!")}</h2>
+          <p>{t("Just start your salah. Sholu will guide you at your own pace!")}</p>
+          <button className="button" onClick={() => setVideo(true)}>
+            <Play size={15} fill="currentColor" />
+            {t("Meet Sholu")}
+          </button>
+          <span className="closing-signature">
+            {t("Your Salah Companion")}
+          </span>
+        </section>
+      </main>
+      <footer className="container">
+        <div>
+          <Brand t={t} />
+          <span>{t("Your Salah Companion")}</span>
+        </div>
+        <span>
+          {"© "}
+          {new Date().getFullYear()} Sholu
+        </span>
+        <a href="#home">{t("Back to top")}</a>
+      </footer>
+      {video && <VideoModal t={t} onClose={() => setVideo(false)} />}
+    </>
+  );
 }
-createRoot(document.getElementById('root')).render(<React.StrictMode><App /></React.StrictMode>);
+createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);
