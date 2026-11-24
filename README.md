@@ -58,3 +58,9 @@ Bagian `#team` menampilkan enam foto yang diberikan pemilik proyek. Nama dan per
 Bagian personalisasi (`#how-it-works`) memiliki galeri empat tampilan: gerakan, Al-Fatihah, Tasyahud Akhir, dan bacaan lainnya. Teks menjelaskan penilaian kemampuan awal dan tingkat kelancaran bacaan, dengan dukungan EN/ID. Tiga screenshot bacaan dari 24 November 2026 disalin tanpa modifikasi; sumber dicatat di `public/assets/screens/SOURCES.md`.
 
 Konten situs tidak menjanjikan perubahan panduan otomatis setelah setiap salat. Refleksi bersifat pilihan; tawaran penggalan lebih panjang atau tahap berikutnya mengikuti rekaman refleksi dan perlu diterima pengguna. Untuk personalisasi, pengguna yang baru mulai langsung masuk tahap 1; pertanyaan bacaan dilanjutkan bagi pengguna yang sudah mengenal gerakan.
+
+## Troubleshooting deployment Pages
+
+Workflow memisahkan job `build` (build dan upload `github-pages`) dari job `deploy` (`needs: build`). Ini mengikuti rekomendasi GitHub dan menghindari lookup artefak yang terlalu cepat setelah upload di job yang sama ([upstream issue #451](https://github.com/actions/deploy-pages/issues/451)). Nama artefak ditetapkan eksplisit pada kedua action.
+
+Setelah perubahan workflow di-commit dan di-push ke `main`, gunakan run baru yang dipicu push tersebut. Re-run run lama tetap memakai revisi workflow lama. Pada workflow baru, jika upload sudah berhasil dan hanya deploy gagal, pilih **Re-run failed jobs** agar tidak mengunggah artefak bernama sama dua kali. Jika artefak sudah kedaluwarsa, jalankan workflow baru melalui **Run workflow**.
